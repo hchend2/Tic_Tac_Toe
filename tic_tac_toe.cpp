@@ -52,24 +52,28 @@ bool isGameOver() {
     
     int count = 0;
     for (int x = 0; x < 9; x++) {
-        if (board[x] == 'X' || board[x] == 'O') {
+        if (!isdigit(board[x])) {
             count++;
         }
-        if (count == 8 || checkWinner() == 1 || checkWinner() == 2) {
-            return true;
-        }
+    }
+    if (count == 8 || checkWinner() == 1 || checkWinner() == 2) {
+        return true;
     }
     return false;
 }
 
 void the_winner_Is(string p1, string p2) {
-    if (checkWinner() == 1) {
-        cout << p1 << " Won!" << endl;
-    } else if ( checkWinner() == 2 ) {
-        cout << p2 << " Won!" << endl;
-    } else {
-        cout << "   Game is Tie..." << endl;
+    if (isGameOver()) {
+        cout << "   Game Over" << endl;
+        if (checkWinner() == 1) {
+            cout << p1 << " Won!" << endl;
+        } else if ( checkWinner() == 2 ) {
+            cout << p2 << " Won!" << endl;
+        } else {
+            cout << "   Game is Tie..." << endl;
+        }
     }
+    return;
 }
 
 void play() {
@@ -81,11 +85,11 @@ void play() {
     char player1_play = 'X', player2_play = 'O';
 
     cout << endl << "   Enter a number between 0 and 8. " << endl;
-    while (true) {
+    while (!isGameOver()) {
         if (count%2 == 0) {
             cout << "   " << player1 << " Your turn! "; cin >> userInput;
             if (board[userInput] == player1_play || board[userInput] == player2_play) {
-                cout << "  Not valid. Try again..." << endl;
+                cout << "   Not valid. Try again..." << endl;
             } else {
                 board[userInput] = player1_play;
                 count++;
@@ -93,16 +97,19 @@ void play() {
         } else {
             cout << "   " <<  player2 << " Your turn! "; cin >> userInput;
             if (board[userInput] == player1_play || board[userInput] == player2_play) {
-                cout << "   Not valid. Try again..." << endl;
+                cout << "    Not valid. Try again..." << endl;
             } else {
                 board[userInput] = player2_play;
+                //the_winner_Is(player1, player2);
                 count++;
             }
         }
         grid();
+        the_winner_Is(player1, player2);
         cout << endl << "   Enter a number between 0 and 8. " << endl;
     }
 }
+
 int main() {
     cout << " Welcome to my Tic Tac Toe game! " << endl;
     cout << endl << " The board! " << endl; 
