@@ -20,16 +20,70 @@ void grid() {
     cout << "      " << "|______|_______|_______|    " << endl;
 }
 
+int checkWinner() {
+
+    for (int i = 0; i < 9; i++) {
+        if (i == 0 && board[i] == 'O' && board[i + 4] == 'O' && board[i + 8] == 'O') {
+            return 2;
+        }
+        if (i == 0 && board[i] == 'X' && board[i + 4] == 'X' && board[i + 8] == 'X') {
+            return 1;
+        }
+        if (i <= 2 && board[i] == 'O' && board[i + 3] == 'O' && board[i + 6] == 'O') {
+            return 2;
+        }
+        if (i <= 2 && board[i] == 'O' && board[i + 3] == 'O' && board[i + 6] == 'O') {
+            return 2;
+        }
+        if (i <= 2 && board[i] == 'X' && board[i + 3] == 'X' && board[i + 6] == 'X') {
+            return 1;
+        }
+        if (i <= 6 && board[i] == 'O' && board[i + 1] == 'O' && board[i + 2] == 'O') {
+            return 2;
+        }
+        if (i <= 6 && board[i] == 'X' && board[i + 1] == 'X' && board[i + 2] == 'X') {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+bool isGameOver() {
+    
+    int count = 0;
+    for (int x = 0; x < 9; x++) {
+        if (board[x] == 'X' || board[x] == 'O') {
+            count++;
+        }
+        if (count == 8 || checkWinner() == 1 || checkWinner() == 2) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void the_winner_Is(string p1, string p2) {
+    if (checkWinner() == 1) {
+        cout << p1 << " Won!" << endl;
+    } else if ( checkWinner() == 2 ) {
+        cout << p2 << " Won!" << endl;
+    } else {
+        cout << "   Game is Tie..." << endl;
+    }
+}
+
 void play() {
     // player1 always goes first...
+
     string player1 = "Herve ";
     string player2 = "Friend ";
     int count = 0, userInput;
     char player1_play = 'X', player2_play = 'O';
-    cout << "  Enter a number between 0 and 8. " << endl;
+
+    cout << endl << "   Enter a number between 0 and 8. " << endl;
     while (true) {
         if (count%2 == 0) {
-            cout << player1 << " Your turn! "; cin >> userInput;
+            cout << "   " << player1 << " Your turn! "; cin >> userInput;
             if (board[userInput] == player1_play || board[userInput] == player2_play) {
                 cout << "  Not valid. Try again..." << endl;
             } else {
@@ -37,7 +91,7 @@ void play() {
                 count++;
             }
         } else {
-            cout << player2 << " Your turn! "; cin >> userInput;
+            cout << "   " <<  player2 << " Your turn! "; cin >> userInput;
             if (board[userInput] == player1_play || board[userInput] == player2_play) {
                 cout << "   Not valid. Try again..." << endl;
             } else {
@@ -46,7 +100,7 @@ void play() {
             }
         }
         grid();
-        cout << "  Enter a number between 0 and 8. " << endl;
+        cout << endl << "   Enter a number between 0 and 8. " << endl;
     }
 }
 int main() {
