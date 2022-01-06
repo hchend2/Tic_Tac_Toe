@@ -6,7 +6,8 @@ using std::cin;
 using std::string;
 
 // draw the gameboard...
-char board[9] = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
+const int size = 9;
+char board[size] = {'0', '1', '2', '3', '4', '5', '6', '7', '8'};
 void grid() {
     cout << "      " << "________________________    " << endl;
     cout << "      " << "|      |       |       |    " << endl;
@@ -20,55 +21,95 @@ void grid() {
     cout << "      " << "|______|_______|_______|    " << endl;
 }
 
-int checkWinner() {
 
-    for (int i = 0; i < 9; i++) {
-        if (i == 0 && board[i] == 'O' && board[i + 4] == 'O' && board[i + 8] == 'O') {
+int checkHorrizontal() {
+
+    if (board[0] == 'O' && board[1] == 'O' && board[2] == 'O') {
             return 2;
-        }
-        if (i == 0 && board[i] == 'X' && board[i + 4] == 'X' && board[i + 8] == 'X') {
-            return 1;
-        }
-        if (i <= 2 && board[i] == 'O' && board[i + 3] == 'O' && board[i + 6] == 'O') {
+    }
+    if (board[0] == 'X' && board[1] == 'X' && board[2] == 'X') {
+        return 1;
+    }
+    if (board[3] == 'O' && board[4] == 'O' && board[5] == 'O') {
             return 2;
-        }
-        if (i <= 2 && board[i] == 'O' && board[i + 3] == 'O' && board[i + 6] == 'O') {
+    }
+    if (board[3] == 'X' && board[4] == 'X' && board[5] == 'X') {
+        return 1;
+    }
+    if (board[6] == 'O' && board[7] == 'O' && board[8] == 'O') {
             return 2;
-        }
-        if (i <= 2 && board[i] == 'X' && board[i + 3] == 'X' && board[i + 6] == 'X') {
-            return 1;
-        }
-        if (i <= 6 && board[i] == 'O' && board[i + 1] == 'O' && board[i + 2] == 'O') {
-            return 2;
-        }
-        if (i <= 6 && board[i] == 'X' && board[i + 1] == 'X' && board[i + 2] == 'X') {
-            return 1;
-        }
+    }
+    if (board[6] == 'X' && board[7] == 'X' && board[8] == 'X') {
+        return 1;
     }
     return 0;
 }
 
-bool isGameOver() {
-    
-    int count = 0;
-    for (int x = 0; x < 9; x++) {
-        if (!isdigit(board[x])) {
-            count++;
-        }
+int checkVertical() {
+    if (board[0] == 'O' && board[3] == 'O' && board[6] == 'O') {
+            return 2;
     }
-    if (count == 8 || checkWinner() == 1 || checkWinner() == 2) {
-        return true;
+    if (board[0] == 'X' && board[3] == 'X' && board[6] == 'X') {
+        return 1;
     }
-    return false;
+    if (board[1] == 'O' && board[4] == 'O' && board[7] == 'O') {
+            return 2;
+    }
+    if (board[1] == 'X' && board[4] == 'X' && board[7] == 'X') {
+        return 1;
+    }
+    if (board[2] == 'O' && board[5] == 'O' && board[8] == 'O') {
+            return 2;
+    }
+    if (board[2] == 'X' && board[5] == 'X' && board[8] == 'X') {
+        return 1;
+    }
+    return 0;
 }
 
+int checkDiagonal() {
+    if (board[0] == 'O' && board[4] == 'O' && board[8] == 'O') {
+            return 2;
+    }
+    if (board[0] == 'X' && board[4] == 'X' && board[8] == 'X') {
+        return 1;
+    }
+    if (board[2] == 'O' && board[4] == 'O' && board[6] == 'O') {
+            return 2;
+    }
+    if (board[2] == 'X' && board[4] == 'X' && board[6] == 'X') {
+        return 1;
+    }
+    return 0;
+}
+
+bool checkedBoard() {
+    for (int i = 0; i < size; i++) {
+        if (isdigit(board[i])) {
+            return false; // not all checked...
+        }
+    }
+    return true; // all checked...
+}
+
+bool isGameOver() {
+    
+    if (!checkedBoard || checkHorrizontal() == 1 || checkVertical() == 1 || checkDiagonal() == 1 ||
+        checkHorrizontal() == 2 || checkVertical() == 2 || checkDiagonal() == 1) {
+        return true; // all checked...or there is a winner...
+    }
+    return false; // no winner... or not all checked...
+}
+
+
 void the_winner_Is(string p1, string p2) {
+
     if (isGameOver()) {
-        cout << "   Game Over" << endl;
-        if (checkWinner() == 1) {
-            cout << p1 << " Won!" << endl;
-        } else if ( checkWinner() == 2 ) {
-            cout << p2 << " Won!" << endl;
+        cout << endl << "   Game Over" << endl;
+        if (checkHorrizontal() == 1 || checkVertical() == 1 || checkDiagonal() == 1) {
+            cout <<"    "<< p1 << " Won!" << endl;
+        } else if ( checkHorrizontal() == 2 || checkVertical() == 2 || checkDiagonal() == 2) {
+            cout <<"     "<<p2 << " Won!" << endl;
         } else {
             cout << "   Game is Tie..." << endl;
         }
@@ -88,31 +129,36 @@ void play() {
     while (!isGameOver()) {
         if (count%2 == 0) {
             cout << "   " << player1 << " Your turn! "; cin >> userInput;
-            if (board[userInput] == player1_play || board[userInput] == player2_play) {
-                cout << "   Not valid. Try again..." << endl;
+            if (userInput > 8 || userInput < 0) {
+                cout << "    Out of range... Try again" << endl;
+            } else if (board[userInput] == player1_play || board[userInput] == player2_play) {
+                cout << "    Not valid. Try again..." << endl;
             } else {
                 board[userInput] = player1_play;
                 count++;
             }
         } else {
             cout << "   " <<  player2 << " Your turn! "; cin >> userInput;
-            if (board[userInput] == player1_play || board[userInput] == player2_play) {
+            if (userInput > 8 || userInput < 0) {
+                cout << "    Out of range... Try again" << endl;
+            } else if (board[userInput] == player1_play || board[userInput] == player2_play) {
                 cout << "    Not valid. Try again..." << endl;
             } else {
                 board[userInput] = player2_play;
-                //the_winner_Is(player1, player2);
                 count++;
             }
         }
         grid();
         the_winner_Is(player1, player2);
-        cout << endl << "   Enter a number between 0 and 8. " << endl;
+        if (!isGameOver()) {
+            cout << endl << "   Enter a number between 0 and 8. " << endl;
+        }
     }
 }
 
 int main() {
-    cout << " Welcome to my Tic Tac Toe game! " << endl;
-    cout << endl << " The board! " << endl; 
+    cout << "   Welcome to my Tic Tac Toe game! " << endl;
+    cout << endl << "   The board! " << endl; 
     grid();
     play();
     return 0;
